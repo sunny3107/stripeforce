@@ -14,10 +14,10 @@ global virtual class StripeWebhookListener {
 			response.statusCode = 200;
 			return;
 		} catch (System.Exception e) {
-			System.debug(System.LoggingLevel.INFO, '\n**** Exception: '+e); 
+			System.debug(System.LoggingLevel.INFO, '\n**** Exception: '+e);
 
 			Map<String, String> error = new Map<String, String>{
-				'type' => e.getTypeName(), 
+				'type' => e.getTypeName(),
 				'error' => e.getMessage()
 			};
 			response.responseBody = Blob.valueOf(JSON.serializePretty(error));
@@ -27,12 +27,12 @@ global virtual class StripeWebhookListener {
 
 		// prevent tests from hitting production
 		if (event.livemode == false && StripeAPI.isTest == false) {
-			System.debug(System.LoggingLevel.INFO, '\n**** Bailing out'); 
+			System.debug(System.LoggingLevel.INFO, '\n**** Bailing out');
 			return;
 		}
-		
-		System.debug(System.LoggingLevel.INFO, '\n**** Event Type in Listener: '+event.stripeType); 
-		
+
+		System.debug(System.LoggingLevel.INFO, '\n**** Event Type in Listener: '+event.stripeType);
+
 		try {
 			//
 			// Invoice Webhooks
@@ -98,18 +98,18 @@ global virtual class StripeWebhookListener {
 			Stripe_Webhook__c webhook = new Stripe_Webhook__c(
 				Webhook_Data__c = RestContext.request.requestBody.toString(),
 				Webhook_Type__c = event.stripeType,
-				Event_ID__c = event.id
+				//Event_ID__c = event.id
 			);
 
 			insert webhook;
-			
+
 			response.statusCode = 200;
 			response.responseBody = Blob.valueOf('{success:true, event:"'+event.stripeType+'", delayed:'+webhook.Id+'}');
 			return;
 
 		} catch (StripeException e) {
 			response.responseBody = Blob.valueOf(JSON.serializePretty(e));
-			System.debug(System.LoggingLevel.INFO, '\n**** Listener Handler Error: '+response.responseBody.toString()); 
+			System.debug(System.LoggingLevel.INFO, '\n**** Listener Handler Error: '+response.responseBody.toString());
 			response.statusCode = 406;
 			return;
 		}
@@ -118,17 +118,17 @@ global virtual class StripeWebhookListener {
 		response.statusCode = 200;
 		response.responseBody = Blob.valueOf('{success:true, event:"'+event.stripeType+'"}');
 	}
-	
+
 	// Handle the invoice.created webhook
 	global virtual void handle_InvoiceCreated(StripeInvoice invoice) {
 		throw new StripeEvent.UnknownWebhookException('Not implemented');
 	}
-	
+
 	// Handle the invoice.payment_succeeded webhook
 	global virtual void handle_InvoicePaymentSucceeded(StripeInvoice invoice) {
 		throw new StripeEvent.UnknownWebhookException('Not implemented');
 	}
-	
+
 	// Handle the invoice.payment_failed webhook
 	global virtual void handle_InvoicePaymentFailed(StripeInvoice invoice) {
 		throw new StripeEvent.UnknownWebhookException('Not implemented');
@@ -138,27 +138,27 @@ global virtual class StripeWebhookListener {
 	global virtual void handle_CustomerSubscriptionDeleted(StripeSubscription subscription) {
 		throw new StripeEvent.UnknownWebhookException('Not implemented');
 	}
-	
+
 	// Handle the customer.updated webhook
 	global virtual void handle_CustomerCreated(StripeCustomer customer) {
 		throw new StripeEvent.UnknownWebhookException('Not implemented');
 	}
-	
+
 	// Handle the customer.updated webhook
 	global virtual void handle_CustomerUpdated(StripeCustomer customer) {
 		throw new StripeEvent.UnknownWebhookException('Not implemented');
 	}
-	
+
 	// Handle the customer.card.created webhook
 	global virtual void handle_CustomerCardCreated(StripeCard card) {
 		throw new StripeEvent.UnknownWebhookException('Not implemented');
 	}
-	
+
 	// Handle the customer.card.updated webhook
 	global virtual void handle_CustomerCardUpdated(StripeCard card) {
 		throw new StripeEvent.UnknownWebhookException('Not implemented');
 	}
-	
+
 	// Handle the charge.succeeded webhook
 	global virtual void handle_ChargeSucceeded(StripeCharge charge) {
 		handle_ChargeSucceeded(charge, true);
@@ -178,7 +178,7 @@ global virtual class StripeWebhookListener {
 	global virtual void handle_ChargeRefunded(StripeCharge charge) {
 		throw new StripeEvent.UnknownWebhookException('Not implemented');
 	}
-	
+
 	// Utility logging method
 	public void createWebhookTask(String subject, Id whatId) {
 		DateTime timestamp = DateTime.now();
@@ -189,11 +189,11 @@ global virtual class StripeWebhookListener {
 			Type = 'Stripe Webhook',
 			WhatId = whatId
 		);
-		
+
 		try {
 			insert task;
 		} catch (Exception e) {
-			System.debug(System.LoggingLevel.INFO, '\n**** Error Inserting Task:'+e); 
+			System.debug(System.LoggingLevel.INFO, '\n**** Error Inserting Task:'+e);
 		}
 	}
 
