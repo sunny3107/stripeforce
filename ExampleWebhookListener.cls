@@ -1,7 +1,7 @@
 @RestResource(urlMapping='/stripe/webhooks/v1/*')
 global class WebhookListener extends StripeWebhookListener {
 
-	/*@HttpPost
+	@HttpPost
 	global static void doPost() {
 		WebhookListener listener = new WebhookListener();
 		listener.handlePost();
@@ -23,7 +23,7 @@ global class WebhookListener extends StripeWebhookListener {
 		handle_ChargeSucceeded(charge, true);
 	}
 
-	public void handle_ChargeSucceeded(StripeCharge charge, Boolean allowDelayedProcessing) {
+	public override void handle_ChargeSucceeded(StripeCharge charge, Boolean allowDelayedProcessing) {
 		throw new StripeEvent.UnknownWebhookException('Not implemented');
 	}
 
@@ -57,6 +57,6 @@ global class WebhookListener extends StripeWebhookListener {
 	// Handle the customer.subscription.deleted webhook
 	public override void handle_CustomerSubscriptionDeleted(StripeSubscription subscription) {
 		throw new StripeEvent.UnknownWebhookException('Not implemented');
-	}*/
+	}
 
 }
